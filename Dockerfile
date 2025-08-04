@@ -1,15 +1,16 @@
-# Stage 1
+# Stage and thin the application 
 FROM icr.io/appcafe/open-liberty:full-java21-openj9-ubi-minimal AS staging
 
-COPY --chown=1001:0 target/guide-spring-boot-0.1.0.jar /staging/fat-guide-spring-boot-0.1.0.jar
+COPY --chown=1001:0 target/guide-spring-boot-0.1.0.jar \
+                    /staging/fat-guide-spring-boot-0.1.0.jar
 
 RUN springBootUtility thin \
  --sourceAppPath=/staging/fat-guide-spring-boot-0.1.0.jar \
  --targetThinAppPath=/staging/thin-guide-spring-boot-0.1.0.jar \
  --targetLibCachePath=/staging/lib.index.cache
 
-# Stage 2
-FROM icr.io/appcafe/open-liberty:kernel-slim-java21-ubi-minimal
+# Build the image
+FROM icr.io/appcafe/open-liberty:kernel-slim-java21-openj9-ubi-minimal
 
 ARG VERSION=1.0
 ARG REVISION=SNAPSHOT
@@ -29,9 +30,10 @@ LABEL \
 
 RUN cp /opt/ol/wlp/templates/servers/springBoot3/server.xml /config/server.xml
 
-RUN features.sh
+#RUN features.sh
 
 COPY --chown=1001:0 --from=staging /staging/lib.index.cache /lib.index.cache
-COPY --chown=1001:0 --from=staging /staging/thin-guide-spring-boot-0.1.0.jar /config/dropins/spring/thin-guide-spring-boot-0.1.0.jar
+COPY --chown=1001:0 --from=staging /staging/thin-guide-spring-boot-0.1.0.jar \
+                    /config/dropins/spring/thin-guide-spring-boot-0.1.0.jar
 
 RUN configure.sh
