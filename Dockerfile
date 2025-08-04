@@ -30,7 +30,9 @@ LABEL \
 
 RUN cp /opt/ol/wlp/templates/servers/springBoot3/server.xml /config/server.xml
 
-#RUN features.sh
+ENV JAVA_TOOL_OPTIONS="-Xnojit"
+
+RUN features.sh
 
 COPY --chown=1001:0 --from=staging /staging/lib.index.cache /lib.index.cache
 COPY --chown=1001:0 --from=staging /staging/thin-guide-spring-boot-0.1.0.jar \
