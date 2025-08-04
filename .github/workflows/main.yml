@@ -27,7 +27,7 @@ jobs:
         run: echo "${{ secrets.NEXUS_PASSWORD }}" | docker login 192.168.1.37:5000 -u ${{ secrets.NEXUS_USERNAME }} --password-stdin
 
       - name: Build Docker Image
-        working-directory: tomcat-sampleapp
+        working-directory: springboot-sampleapp
         run: docker build -t $IMAGE_NAME:$IMAGE_TAG .
 
       - name: Push Docker Image
