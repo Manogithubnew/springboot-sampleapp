@@ -1,0 +1,43 @@
+#tomcat-app
+namespace: tomcat-sample
+
+image:
+  repository: 192.168.1.37:5000/tomcat-sample
+  tag: latest
+  pullPolicy: Always
+
+replicaCount: 1
+containerPort: 8080
+
+service:
+  name: tomcat
+  type: NodePort
+  port: 8080
+  nodePort: 30080
+
+imagePullSecrets:
+  - name: image-registry-secret
+
+livenessProbe:
+  httpGet:
+    path: /sample/
+    port: 8080
+  initialDelaySeconds: 40
+  timeoutSeconds: 5
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /sample/
+    port: 8080
+  initialDelaySeconds: 30
+  timeoutSeconds: 5
+  periodSeconds: 5
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
